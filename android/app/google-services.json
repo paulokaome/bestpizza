@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "384268329396",
+    "project_id": "bestpizza-ec947",
+    "storage_bucket": "bestpizza-ec947.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:384268329396:android:91cf60d142bab3cbd912e1",
+        "android_client_info": {
+          "package_name": "com.bestpizza"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "384268329396-8omipa8m1hom8dti8tnk13o0gcichbbc.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBO2kU6QKq3OYFAs09koLujMLO7khKgI1g"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "384268329396-8omipa8m1hom8dti8tnk13o0gcichbbc.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
