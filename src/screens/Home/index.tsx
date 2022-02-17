@@ -1,8 +1,9 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { MaterialIcons } from "@expo/vector-icons";
 import happyEmoji from "@assets/happy.png";
-import { Alert, TouchableOpacity } from "react-native";
+import { Alert, TouchableOpacity, FlatList } from "react-native";
 import { useTheme } from "styled-components";
+import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import firestore from "@react-native-firebase/firestore";
 
 import { Search } from "@components/Search";
@@ -17,10 +18,14 @@ import {
   MenuTitle,
   MenuHeader,
   MenuItensNumber,
+  NewProductButton,
 } from "./styles";
 
 export function Home() {
   const { COLORS } = useTheme();
+  const navigation = useNavigation();
+  const [pizzas, setPizzas] = useState<ProductProps[]>([]);
+  const [search, setSearch] = useState("");
 
   function fetchPizzas(value: string) {
     const formattedValue = value.toLocaleLowerCase().trim();
@@ -39,15 +44,36 @@ export function Home() {
           };
         }) as ProductProps[];
         console.log(data);
+
+        setPizzas(data);
       })
       .catch(() =>
         Alert.alert("Consulta", "Não foi possível realizar a consulta")
       );
   }
 
-  useEffect(() => {
+  function handleSearch() {
+    fetchPizzas(search);
+  }
+
+  function handleSearchClear() {
+    setSearch("");
     fetchPizzas("");
-  }, []);
+  }
+
+  function handleAdd() {
+    navigation.navigate("product", {});
+  }
+
+  function handleOpen(id: string) {
+    navigation.navigate("product", { id });
+  }
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchPizzas("");
+    }, [])
+  );
 
   return (
     <Container>
@@ -60,18 +86,34 @@ export function Home() {
           <MaterialIcons name="logout" size={24} color={COLORS.TITLE} />
         </TouchableOpacity>
       </Header>
-      <Search onSearch={() => {}} onClear={() => {}} />
+      <Search
+        onChangeText={setSearch}
+        value={search}
+        onSearch={handleSearch}
+        onClear={handleSearchClear}
+      />
       <MenuHeader>
         <MenuTitle>Cardápio</MenuTitle>
-        <MenuItensNumber>33 pizzas</MenuItensNumber>
+        <MenuItensNumber>{pizzas.length} pizzas</MenuItensNumber>
       </MenuHeader>
-      <ProductCard
-        data={{
-          id: "1",
-          name: "Pizza",
-          description: "lorem lorem lorem lorem lorem",
-          photo_url: "https://github.com/paulokaome.png",
+      <FlatList
+        data={pizzas}
+        keyExtractor={(item) => item.id}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{
+          paddingTop: 20,
+          paddingBottom: 125,
+          marginHorizontal: 24,
         }}
+        renderItem={({ item }) => (
+          <ProductCard data={item} onPress={() => handleOpen(item.id)} />
+        )}
+      />
+
+      <NewProductButton
+        title="Cadastrar Pizza"
+        type="secondary"
+        onPress={handleAdd}
       />
     </Container>
   );

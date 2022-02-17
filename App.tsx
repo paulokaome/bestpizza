@@ -8,10 +8,8 @@ import { AuthProvider } from "@hooks/auth";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 import theme from "./src/theme";
-
-import { SignIn } from "@screens/SignIn";
-import { Products } from "@screens/Products";
-import { Home } from "@screens/Home";
+import { Routes } from "./src/routes";
+import { Order } from "@screens/Order"
 
 export default function App() {
   const [fontsLoaded] = useFonts({
@@ -28,9 +26,8 @@ export default function App() {
       <ThemeProvider theme={theme}>
         <StatusBar style="light" translucent backgroundColor="transparent" />
         <AuthProvider>
-          {/* <SignIn /> */}
-          {/* <Products/> */}
-          <Home />
+          {/* <Routes /> */}
+          <Order />
         </AuthProvider>
       </ThemeProvider>
     </GestureHandlerRootView>

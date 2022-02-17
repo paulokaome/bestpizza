@@ -22,7 +22,7 @@ export function Search({ onSearch, onClear, ...rest }: Props) {
         </ButtonClear>
       </InputArea>
       <Button>
-        <Feather name="search" size={16} color={COLORS.TITLE} />
+        <Feather name="search" size={16} color={COLORS.TITLE} onPress={onSearch}/>
       </Button>
     </Container>
   );
