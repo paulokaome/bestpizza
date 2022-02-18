@@ -41,5 +41,5 @@ export const Selected = styled.View`
   width: 8px;
   height: 8px;
   border-radius: 4px;
-  background-color: 1px solid ${({ theme }) => theme.COLORS.SECONDARY_900};
+  background-color: ${({ theme }) => theme.COLORS.SECONDARY_900};
 `;
