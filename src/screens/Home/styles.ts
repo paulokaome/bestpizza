@@ -1,6 +1,5 @@
 import { Button } from "@components/Button";
 import { LinearGradient } from "expo-linear-gradient";
-import { BorderlessButton } from "react-native-gesture-handler";
 import {
   getBottomSpace,
   getStatusBarHeight,
@@ -28,9 +27,8 @@ export const Greeting = styled.View`
 `;
 
 export const GreetingEmoji = styled.Image`
-  height: 32px;
-  width: 32px;
-  margin-right: 12px;
+  height: 100px;
+  width: 100px;
 `;
 
 export const GreetingText = styled.Text`

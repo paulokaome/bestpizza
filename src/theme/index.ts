@@ -11,17 +11,17 @@ export default {
     SECONDARY_500: '#7A6769',
     SECONDARY_400: '#93797B',
 
-    SUCCESS_900: '#528F33',
+    SUCCESS_900: '#5FAD41',
     SUCCESS_50: '#F7FFF9',
 
-    ALERT_900: '#B27F00',
-    ALERT_800: '#C5941A',
+    ALERT_900: '#EE964B',
+    ALERT_800: '#F4D35E',
     ALERT_50: '#F3EFE5',
 
     SHAPE: '#DCDCDC',
     TITLE: '#FFF',
 
-    GRADIENT: ['#B83341', '#E03F50'],
+    GRADIENT: ['#B12722', '#E03F50'],
   },
 
   FONTS: {

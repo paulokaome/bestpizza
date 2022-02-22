@@ -20,10 +20,15 @@ import {
   MenuItensNumber,
   NewProductButton,
 } from "./styles";
+import { useAuth } from "@hooks/auth";
+
+import LogoImg from "@assets/Logo.png";
+import LogoAdmin from "@assets/Logo1.png";
 
 export function Home() {
   const { COLORS } = useTheme();
   const navigation = useNavigation();
+  const { Logout, user } = useAuth();
   const [pizzas, setPizzas] = useState<ProductProps[]>([]);
   const [search, setSearch] = useState("");
 
@@ -43,8 +48,6 @@ export function Home() {
             ...doc.data(),
           };
         }) as ProductProps[];
-        console.log(data);
-
         setPizzas(data);
       })
       .catch(() =>
@@ -61,12 +64,13 @@ export function Home() {
     fetchPizzas("");
   }
 
-  function handleAdd() {
-    navigation.navigate("product", {});
+  function handleOpen(id: string) {
+    const route = user?.isAdmin ? "product" : "order";
+    navigation.navigate(route, { id });
   }
 
-  function handleOpen(id: string) {
-    navigation.navigate("product", { id });
+  function handleLogout() {
+    Logout();
   }
 
   useFocusEffect(
@@ -79,10 +83,10 @@ export function Home() {
     <Container>
       <Header>
         <Greeting>
-          <GreetingEmoji source={happyEmoji} />
-          <GreetingText>Olá, Admin</GreetingText>
+          <GreetingEmoji source={user?.isAdmin ? LogoAdmin : LogoImg} />
+          <GreetingText>Olá, {user?.isAdmin ? "Admin" : "Garçom"}</GreetingText>
         </Greeting>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={() => handleLogout()}>
           <MaterialIcons name="logout" size={24} color={COLORS.TITLE} />
         </TouchableOpacity>
       </Header>
@@ -108,12 +112,6 @@ export function Home() {
         renderItem={({ item }) => (
           <ProductCard data={item} onPress={() => handleOpen(item.id)} />
         )}
-      />
-
-      <NewProductButton
-        title="Cadastrar Pizza"
-        type="secondary"
-        onPress={handleAdd}
       />
     </Container>
   );

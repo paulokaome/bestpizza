@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   Platform,
   TouchableOpacity,
@@ -10,7 +10,11 @@ import * as ImagePicker from "expo-image-picker";
 import firestore from "@react-native-firebase/firestore";
 import storage from "@react-native-firebase/storage";
 
-import { useNavigation, useRoute } from "@react-navigation/native";
+import {
+  useFocusEffect,
+  useNavigation,
+  useRoute,
+} from "@react-navigation/native";
 import { ProductNavigationProps } from "../../@types/navigation";
 
 import { InputPrice } from "@components/InputPrice";
@@ -53,10 +57,9 @@ export function Product() {
   const [priceSizeG, setPriceSizeG] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  const navigation = useNavigation();
+  const navigation = useNavigation<any>();
   const route = useRoute();
   const { id } = route.params as ProductNavigationProps;
-  console.log("id do produto", id);
 
   async function handlePickerImage() {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -105,7 +108,7 @@ export function Product() {
       })
       .then(() => {
         Alert.alert("Cadastro", "Pizza Cadastrada com sucesso");
-        navigation.navigate("home");
+        navigation.reset({ index: 0, routes: [{ name: "home" }] });
       })
       .catch(() => Alert.alert("Erro", "Não foi possível cadastrar a pizza"));
 
@@ -121,35 +124,74 @@ export function Product() {
         storage()
           .ref(photoPath)
           .delete()
-          .then(() => navigation.navigate("home"));
+          .then(() =>
+            navigation.reset({ index: 0, routes: [{ name: "home" }] })
+          );
       });
   }
 
+  async function handleUpdate() {
+    firestore()
+      .collection("pizzas")
+      .doc(id)
+      .update({
+        name,
+        name_insensitive: name.toLocaleLowerCase().trim(),
+        prices_sizes: {
+          p: priceSizeP,
+          m: priceSizeM,
+          g: priceSizeG,
+        },
+        description,
+      })
+      .then(() => Alert.alert("Edição", "Pizza Editada com sucesso"))
+      .catch(() => Alert.alert("Edição", "Houve uma falha na edição da pizza"));
+  }
+
+  useFocusEffect(
+    useCallback(() => {
+      if (id) {
+        firestore()
+          .collection("pizzas")
+          .doc(id)
+          .get()
+          .then((response) => {
+            console.log(response);
+            const product = response.data() as PizzaResponse;
+            setName(product.name);
+            setDescription(product.description);
+            setImage(product.photo_url);
+            setPriceSizeP(product.prices_sizes.p);
+            setPriceSizeM(product.prices_sizes.m);
+            setPriceSizeG(product.prices_sizes.g);
+            setPhotoPath(product.photo_path);
+          });
+      } else {
+      }
+    }, [id])
+  );
+
   useEffect(() => {
-    if (id) {
-      firestore()
-        .collection("pizzas")
-        .doc(id)
-        .get()
-        .then((response) => {
-          console.log(response);
-          const product = response.data() as PizzaResponse;
-          setName(product.name);
-          setDescription(product.description);
-          setImage(product.photo_url);
-          setPriceSizeP(product.prices_sizes.p);
-          setPriceSizeM(product.prices_sizes.m);
-          setPriceSizeG(product.prices_sizes.g);
-          setPhotoPath(product.photo_path);
-        });
-    }
-  }, [id]);
+    const unsubscribe = navigation.addListener(
+      "tabPress",
+      (e: React.FormEvent<HTMLInputElement>) => {
+        e.preventDefault();
+        navigation.reset({ index: 0, routes: [{ name: "product" }] });
+      }
+    );
+
+    return unsubscribe;
+  }, [navigation]);
 
   return (
     <Container behavior={Platform.OS === "ios" ? "padding" : undefined}>
       <ScrollView showsVerticalScrollIndicator={false}>
         <Header>
-          <ButtonBack onPress={() => navigation.goBack()} />
+          <ButtonBack
+            onPress={() =>
+              navigation.reset({ index: 0, routes: [{ name: "home" }] })
+            }
+          />
           <Title>Cadastrar</Title>
           {id ? (
             <TouchableOpacity onPress={handleDelete}>
@@ -178,7 +220,9 @@ export function Product() {
           <InputGroup>
             <InputGroupHeader>
               <Label>Descrição</Label>
-              <MaxCaracters>0 de 60 caracteres</MaxCaracters>
+              <MaxCaracters>
+                {description?.length} de 60 caracteres
+              </MaxCaracters>
             </InputGroupHeader>
             <Input
               onChangeText={setDescription}
@@ -207,11 +251,17 @@ export function Product() {
               value={priceSizeG}
             />
           </InputGroup>
-          {!id && (
+          {!id ? (
             <Button
               title="Cadastrar Pizza"
               isLoading={isLoading}
               onPress={handleAdd}
+            />
+          ) : (
+            <Button
+              title="Editar Pizza"
+              isLoading={isLoading}
+              onPress={handleUpdate}
             />
           )}
         </Form>

@@ -5,7 +5,7 @@ export type RadioButtonProps = {
 };
 
 export const Container = styled.TouchableOpacity<RadioButtonProps>`
-  width: 104px;
+  width: 100px;
   height: 82px;
   border-radius: 8px;
   padding: 14px 16px;
