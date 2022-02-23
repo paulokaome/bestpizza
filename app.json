@@ -6,6 +6,10 @@
     "assetBundlePatterns": [
       "**/*"
     ],
+    "splash": {
+      "image": "./assets/splash.png",
+      "backgroundColor": "#E03F50"
+    },
     "plugins": [
       [
         "expo-image-picker",

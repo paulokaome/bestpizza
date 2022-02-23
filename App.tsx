@@ -9,7 +9,6 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 import theme from "./src/theme";
 import { Routes } from "./src/routes";
-import { Orders } from "@screens/Orders"
 
 export default function App() {
   const [fontsLoaded] = useFonts({
